@@ -1,0 +1,52 @@
+# --- Python / Pydantic / FastAPI ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# --- Envs ---
+.env
+.env.*
+.venv/
+venv/
+ENV/
+
+# --- SQLite (local & docker volume mounts) ---
+app.db
+*.sqlite
+*.sqlite3
+data/
+*/data/
+app/data/
+**/app.db
+
+# --- VS Code / IDE ---
+.vscode/
+.idea/
+*.code-workspace
+
+# --- Logs / caches ---
+*.log
+logs/
+*.pid
+
+# --- Build / dist / packaging ---
+build/
+dist/
+site/
+docs/_build/
+
+# --- OS files ---
+.DS_Store
+Thumbs.db
+
+# --- Docker ---
+# (La DB va en un volumen; evita accidentalmente versionar restos locales)
+docker-compose.override.yml
