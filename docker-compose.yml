@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+  # Contenedor principal: la API
+  api:
+    build: .
+    image: catalogo-api:1.0
+    container_name: catalogo-api
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:////app/data/app.db
+    volumes:
+      - catalogo_data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # Segundo contenedor: cliente que se comunica con la API
+  client:
+    image: curlimages/curl:latest
+    container_name: catalogo-client
+    depends_on:
+      api:
+        condition: service_healthy
+    command: >
+      sh -c "
+        echo 'Waiting for API...' &&
+        sleep 5 &&
+        echo 'Requesting /health from API:' &&
+        curl -s http://api:8000/health &&
+        echo '\nRequesting /movies from API:' &&
+        curl -s http://api:8000/movies | head -c 300 &&
+        echo '\nCommunication OK';
+        sleep infinity
+      "
+
+  # Contenedor opcional para sembrar datos (solo corre una vez)
+  seed:
+    image: catalogo-api:1.0
+    container_name: catalogo-seed
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=sqlite:////app/data/app.db
+    volumes:
+      - catalogo_data:/app/data
+    entrypoint: ["python", "-m", "app.seed"]
+    restart: "no"
+
+volumes:
+  catalogo_data:
