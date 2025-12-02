@@ -12,13 +12,13 @@ pipeline {
       steps {
         sh """
           python3 -m venv .venv
-          source .venv/bin/activate
-          pip install --upgrade pip
-          pip install -r requirements.txt
-          pytest -q
+          .venv/bin/pip install --upgrade pip
+          .venv/bin/pip install -r requirements.txt
+          .venv/bin/pytest -q
         """
       }
     }
+
 
     stage('Build Docker Image') {
       steps {
